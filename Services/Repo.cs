@@ -17,11 +17,25 @@ namespace api.Services
             _dataContext = dataContext;
         }
 
+        public async Task<bool> AddTaskList(TaskList newTaskList)
+        {
+            try
+            {
+                await _dataContext.TaskLists.AddAsync(newTaskList);
+                await _dataContext.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         public async Task<List<TaskList>> GetAllTaskLists()
         {
             try
             {
-                var result = await _dataContext.TaskLists.ToListAsync();
+                var result = await _dataContext.TaskLists.Where(taskList => taskList.Deleted == false).ToListAsync();
                 return result;
             }
             catch (Exception)
@@ -66,7 +80,21 @@ namespace api.Services
             try
             {
                 var taskToDelete = await _dataContext.TaskLists.SingleOrDefaultAsync(taskList => taskList.Id == id);
-                _dataContext.TaskLists.Remove(taskToDelete);
+                taskToDelete.Deleted = true;
+                await _dataContext.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> AddTask(TaskObj newTask)
+        {
+            try
+            {
+                await _dataContext.Tasks.AddAsync(newTask);
                 await _dataContext.SaveChangesAsync();
                 return true;
             }
@@ -80,7 +108,7 @@ namespace api.Services
         {
             try
             {
-                var result = await _dataContext.Tasks.ToListAsync();
+                var result = await _dataContext.Tasks.Where(task => task.Deleted == false).ToListAsync();
                 return result;
             }
             catch (Exception)
@@ -93,7 +121,7 @@ namespace api.Services
         {
             try
             {
-                var result = await _dataContext.Tasks.Where(task => task.TaskListId == listId).ToListAsync();
+                var result = await _dataContext.Tasks.Where(task => task.TaskListId == listId && task.Deleted == false).ToListAsync();
                 return result;
             }
             catch (Exception)
@@ -137,7 +165,7 @@ namespace api.Services
             try
             {
                 var taskToDelete = await _dataContext.Tasks.SingleOrDefaultAsync(task => task.Id == id);
-                _dataContext.Tasks.Remove(taskToDelete);
+                taskToDelete.Deleted = true;
                 await _dataContext.SaveChangesAsync();
                 return true;
             }
