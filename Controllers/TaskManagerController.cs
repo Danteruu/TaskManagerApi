@@ -57,8 +57,9 @@ namespace api.Controllers
         #region Task CRUD
         
         [HttpPost, Route("task")]
-        public async Task<IActionResult> AddTask(TaskObj newTask){
-            var result = await _repo.AddTask(newTask);
+        public async Task<IActionResult> AddTask(TaskObj newTask)
+        {
+            var result = _repo.AddTask(newTask);
             return Ok(result);
         }
 
@@ -66,6 +67,12 @@ namespace api.Controllers
         public async Task<IActionResult> GetAllTasks()
         {
             var result = await _repo.GetAllTasks();
+            return Ok(result);
+        }
+
+        public async Task<IActionResult> GetTasksFromList(int listId)
+        {
+            var result = await _repo.GetTasksFromList(listId);
             return Ok(result);
         }
 
