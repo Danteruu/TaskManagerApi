@@ -1,48 +1,150 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using api.Models;
+using Microsoft.EntityFrameworkCore;
+using task_manager;
 
 namespace api.Services
 {
     public class Repo : IRepo
     {
-        public Task<IEnumerable<TaskList>> GetTaskLists()
+        private DataContext _dataContext;
+
+        public Repo(DataContext dataContext)
         {
-            throw new System.NotImplementedException();
+            _dataContext = dataContext;
         }
 
-        public Task<TaskList> GetTaskList(int id)
+        public async Task<List<TaskList>> GetAllTaskLists()
         {
-            throw new System.NotImplementedException();
+            try
+            {
+                var result = await _dataContext.TaskLists.ToListAsync();
+                return result;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
-        public Task<bool> UpdateTaskList(TaskList updatedTaskList)
+        public async Task<TaskList> GetTaskList(int id)
         {
-            throw new System.NotImplementedException();
+            try
+            {
+                var result = await _dataContext.TaskLists.SingleOrDefaultAsync(task => task.Id == id);
+                return result;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+            
         }
 
-        public Task<bool> DeleteTaskList(int id)
+        public async Task<bool> UpdateTaskList(TaskList updatedTaskList)
         {
-            throw new System.NotImplementedException();
+            try
+            {
+                var taskListToUpdate = await _dataContext.TaskLists.SingleOrDefaultAsync(taskList => taskList.Id == updatedTaskList.Id);
+                taskListToUpdate.Name = updatedTaskList.Name;
+                taskListToUpdate.CreateDate = updatedTaskList.CreateDate;
+                taskListToUpdate.Deleted = updatedTaskList.Deleted;
+                await _dataContext.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
-        public Task<IEnumerable<TaskObj>> GetTasks()
+        public async Task<bool> DeleteTaskList(int id)
         {
-            throw new System.NotImplementedException();
+            try
+            {
+                var taskToDelete = await _dataContext.TaskLists.SingleOrDefaultAsync(taskList => taskList.Id == id);
+                _dataContext.TaskLists.Remove(taskToDelete);
+                await _dataContext.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
-        public Task<TaskObj> GetTask(int id)
+        public async Task<List<TaskObj>> GetAllTasks()
         {
-            throw new System.NotImplementedException();
+            try
+            {
+                var result = await _dataContext.Tasks.ToListAsync();
+                return result;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
-        public Task<bool> UpdateTask(TaskObj updatedTask)
+        public async Task<List<TaskObj>> GetTasksFromList(int listId)
         {
-            throw new System.NotImplementedException();
+            try
+            {
+                var result = await _dataContext.Tasks.Where(task => task.TaskListId == listId).ToListAsync();
+                return result;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
-        public Task<bool> DeleteTask(int id)
+
+        public async Task<TaskObj> GetTask(int id)
         {
-            throw new System.NotImplementedException();
+            try
+            {
+                var result = await _dataContext.Tasks.SingleOrDefaultAsync(task => task.Id == id);
+                return result;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        public async Task<bool> UpdateTask(TaskObj updatedTask)
+        {
+            try
+            {
+                var taskToUpdate = await _dataContext.Tasks.SingleOrDefaultAsync(task => task.Id == updatedTask.Id);
+                taskToUpdate.Text = updatedTask.Text;
+                taskToUpdate.CreateDate = updatedTask.CreateDate;
+                taskToUpdate.Deleted = updatedTask.Deleted;
+                await _dataContext.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+        
+        public async Task<bool> DeleteTask(int id)
+        {
+            try
+            {
+                var taskToDelete = await _dataContext.Tasks.SingleOrDefaultAsync(task => task.Id == id);
+                _dataContext.Tasks.Remove(taskToDelete);
+                await _dataContext.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
     }
 }
