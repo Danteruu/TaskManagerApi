@@ -9,5 +9,6 @@ namespace api.Models
         public string Text { get; set; }
         public DateTime CreateDate { get; set; }
         public bool Deleted { get; set; }
+        public bool Completed { get; set; }
     }
 }

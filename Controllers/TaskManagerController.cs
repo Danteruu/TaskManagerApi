@@ -45,7 +45,7 @@ namespace api.Controllers
             return Ok(result);
         }
 
-        [HttpDelete, Route("tasklist")]
+        [HttpDelete, Route("tasklist/{id}")]
         public async Task<IActionResult> DeleteTasklist(int id)
         {
             var result = await _repo.DeleteTaskList(id);
@@ -59,7 +59,7 @@ namespace api.Controllers
         [HttpPost, Route("task")]
         public async Task<IActionResult> AddTask(TaskObj newTask)
         {
-            var result = _repo.AddTask(newTask);
+            var result = await _repo.AddTask(newTask);
             return Ok(result);
         }
 
@@ -70,6 +70,7 @@ namespace api.Controllers
             return Ok(result);
         }
 
+        [HttpGet, Route("tasklist/{listId}/tasks")]
         public async Task<IActionResult> GetTasksFromList(int listId)
         {
             var result = await _repo.GetTasksFromList(listId);
@@ -90,7 +91,7 @@ namespace api.Controllers
             return Ok(result);
         }
 
-        [HttpDelete, Route("task")]
+        [HttpDelete, Route("task/{id}")]
         public async Task<IActionResult> DeleteTask(int id)
         {
             var result = await _repo.DeleteTask(id);

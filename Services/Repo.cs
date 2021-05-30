@@ -151,6 +151,7 @@ namespace api.Services
                 taskToUpdate.Text = updatedTask.Text;
                 taskToUpdate.CreateDate = updatedTask.CreateDate;
                 taskToUpdate.Deleted = updatedTask.Deleted;
+                taskToUpdate.Completed = updatedTask.Completed;
                 await _dataContext.SaveChangesAsync();
                 return true;
             }
